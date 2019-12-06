@@ -9,7 +9,7 @@ const readFileAsync = util.promisify(fs.readFile);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const noteArray;
+let noteArray;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -40,7 +40,7 @@ app.post("/api/notes", function (req, res) {
     readFileAsync(path.join(__dirname, "./db/db.json"), "utf8")
         .then(function (data) {
             noteArray = JSON.parse(data);
-            if newNote.id || newNote.id === 0) {
+            if (newNote.id || newNote.id === 0) {
                 let currentNote = noteArray[newNote.id];
                 currentNote.title = newNote.title;
                 currentNote.text = newNote.text;
@@ -49,7 +49,7 @@ app.post("/api/notes", function (req, res) {
             }
             writeFileAsync(path.join(__dirname, "./db/db.json"), JSON.stringify(noteArray))
                 .then(function () {
-                    console.log("Wrote note to JSON file.")''
+                    console.log("Wrote note to JSON file.");
                 })
         });
     res.json(newNote);
