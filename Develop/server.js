@@ -2,8 +2,7 @@ const express = require("express");
 const path = require("path");
 const fs = require("fs");
 const util = require("util");
-const jsonData = require("./db/db.json");
-
+ 
 const writeFileAsync = util.promisify(fs.writeFile);
 const readFileAsync = util.promisify(fs.readFile);
 
@@ -39,6 +38,7 @@ app.post("/api/notes", function (req, res) {
 
     readFileAsync(path.join(__dirname, "./db/db.json"), "utf8")
         .then(function (data) {
+            console.log(data);
             noteArray = JSON.parse(data);
             if (newNote.id || newNote.id === 0) {
                 let currentNote = noteArray[newNote.id];
@@ -56,9 +56,22 @@ app.post("/api/notes", function (req, res) {
 });
 
 app.delete("/api/notes/:id", function (req, res) {
+    let del = req.params.id;
+    console.log(del);
 
+    readFileAsync(path.join(__dirname, "./db/db.json"), "utf8")
+        .then(function (data) {
+            console.log(data);
+            noteArray = JSON.parse(data);
+            noteArray.splice(del, 1);
+
+            writeFileAsync(path.join(__dirname, "./db/db.json"), JSON.stringify(noteArray))
+                .then(function () {
+                    console.log("Deleted note from JSON file.");
+                })
+        });
+    res.json(del);
 });
-
 
 app.listen(PORT, function () {
     console.log("App listening on PORT " + PORT);
